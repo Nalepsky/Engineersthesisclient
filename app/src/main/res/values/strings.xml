@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Engineers-thesis-client</string>
+    <string name="army_arranger_nalepka_marek">Army Arranger - Nalepka Marek</string>
+    <string name="army_arranger">Army Arranger</string>
+    <string name="about_aplication">About Aplication</string>
+    <string name="create_army_list">Create Army List</string>
+    <string name="exit">Exit</string>
 </resources>
