@@ -31,6 +31,11 @@ public class Unit {
     private List<Option> options;
     private List<Weapon> weapons;
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     public Integer getAdditionalCost(ExperienceLevel level){
         Map<ExperienceLevel, Integer> cost = new HashMap<>();
         cost.put(ExperienceLevel.INEXPERIENCED, getIAdditionalCost());
