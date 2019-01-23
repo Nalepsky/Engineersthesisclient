@@ -5,4 +5,9 @@
     <string name="about_aplication">About Aplication</string>
     <string name="create_army_list">Create Army List</string>
     <string name="exit">Exit</string>
+    <string name="cost">Cost</string>
+    <string name="composition">Composition</string>
+    <string name="weapons">Weapons</string>
+    <string name="options">Options</string>
+    <string name="special_rules">Special Rules</string>
 </resources>
