@@ -60,8 +60,6 @@ public class CreateUnitActivity extends AppCompatActivity {
             public void onResponse(Call<Unit> call, Response<Unit> response) {
                 unit = response.body();
 
-                System.out.println("=========" + unit.getR_cost());
-
                 unitName.setText(unit.getName());
                 costValue.setText(unit.getAllCosts());
                 composition.setText(unit.getComposition());

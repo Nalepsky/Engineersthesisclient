@@ -29,12 +29,12 @@ public class Unit {
     private String composition;
     private Integer baseNumber;
     private Integer maxNumber;
-    private Integer i_cost;
-    private Integer r_cost;
-    private Integer v_cost;
-    private Integer additional_i_cost;
-    private Integer additional_r_cost;
-    private Integer additional_v_cost;
+    private Integer inexpCost;
+    private Integer regCost;
+    private Integer vetCost;
+    private Integer inexpAdditionalCost;
+    private Integer regAdditionalCost;
+    private Integer vetAdditionalCost;
     private List<Rule> rules;
     private List<Option> options;
     private List<Weapon> weapons;
@@ -46,18 +46,18 @@ public class Unit {
 
     public Integer getAdditionalCost(ExperienceLevel level){
         Map<ExperienceLevel, Integer> cost = new HashMap<>();
-        cost.put(ExperienceLevel.INEXPERIENCED, getAdditional_i_cost());
-        cost.put(ExperienceLevel.REGULAR, getAdditional_r_cost());
-        cost.put(ExperienceLevel.VETERAN, getAdditional_v_cost());
+        cost.put(ExperienceLevel.INEXPERIENCED, getInexpAdditionalCost());
+        cost.put(ExperienceLevel.REGULAR, getRegAdditionalCost());
+        cost.put(ExperienceLevel.VETERAN, getVetAdditionalCost());
 
         return cost.get(level);
     }
 
     public Integer getCost(ExperienceLevel level){
         Map<ExperienceLevel, Integer> cost = new HashMap<>();
-        cost.put(ExperienceLevel.INEXPERIENCED, getI_cost());
-        cost.put(ExperienceLevel.REGULAR, getR_cost());
-        cost.put(ExperienceLevel.VETERAN, getV_cost());
+        cost.put(ExperienceLevel.INEXPERIENCED, getInexpCost());
+        cost.put(ExperienceLevel.REGULAR, getRegCost());
+        cost.put(ExperienceLevel.VETERAN, getVetCost());
 
         return cost.get(level);
     }
@@ -65,16 +65,16 @@ public class Unit {
     public String getAllCosts() {
         StringBuilder result = new StringBuilder();
 
-        if(getI_cost() != null){
-            result.append(" Inexperienced: ").append(getI_cost()).append("pts ");
+        if(getInexpCost() > -1){
+            result.append(" Inexperienced: ").append(getInexpCost()).append("pts ");
         }
 
-        if(getR_cost() != null){
-            result.append(" Regular: ").append(getR_cost()).append("pts ");
+        if(getRegCost() > -1){
+            result.append(" Regular: ").append(getRegCost()).append("pts ");
         }
 
-        if(getV_cost() != null){
-            result.append(" Veteran: ").append(getV_cost()).append("pts ");
+        if(getVetCost() > -1){
+            result.append(" Veteran: ").append(getVetCost()).append("pts ");
         }
 
         return result.toString();
