@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,8 @@ import java.util.List;
 import io.futurestud.retrofit1.api.model.Rule;
 import io.futurestud.retrofit1.api.model.Unit;
 import io.futurestud.retrofit1.api.model.Weapon;
+import io.futurestud.retrofit1.api.model.dataHolder.UnitDataHolder;
+import io.futurestud.retrofit1.api.model.utils.ExperienceLevel;
 import io.futurestud.retrofit1.api.service.UnitClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,8 +38,11 @@ public class CreateUnitActivity extends AppCompatActivity {
     ViewGroup costValue;
     TextView composition;
     TextView weapons;
+    LinearLayout additionalModels;
     LinearLayout options;
     TextView specialRules;
+
+    private UnitDataHolder unitDataHolder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,8 +54,11 @@ public class CreateUnitActivity extends AppCompatActivity {
         costValue = (ViewGroup ) findViewById(R.id.unit_base_cost_value);
         composition = (TextView) findViewById(R.id.composition_value);
         weapons = (TextView) findViewById(R.id.weapons_value);
+        additionalModels = (LinearLayout) findViewById(R.id.additional_models);
         options = (LinearLayout) findViewById(R.id.options_value);
         specialRules = (TextView) findViewById(R.id.special_rules_value);
+
+        unitDataHolder = new UnitDataHolder();
 
         Intent i = getIntent();
         final Long unitId = i.getLongExtra("unitId", -1);
@@ -73,6 +83,7 @@ public class CreateUnitActivity extends AppCompatActivity {
                 createCostValues(unit);
                 composition.setText(unit.getComposition());
                 weapons.setText(createWeaponsList(unit.getWeapons()));
+                createAdditionalModelsValues(unit);
                 createOptionsList(unit);
                 specialRules.setText(createRulesList(unit.getRules()));
 
@@ -86,15 +97,48 @@ public class CreateUnitActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("SetTextI18n")
+    private void createAdditionalModelsValues(Unit unit){
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView description = new TextView(this);
+
+        if(!unit.getMaxNumber().equals(unit.getBaseNumber())){
+            Integer additionalModelsNumber = unit.getMaxNumber() - unit.getBaseNumber();
+            Integer cost = unit.getAdditionalCost(unitDataHolder.getExperienceLevel());
+            description.setText("add up to " + additionalModelsNumber + " additional soldiers for +" + cost + " pts each");
+
+            NumberPicker numberPicker = new NumberPicker(CreateUnitActivity.this);
+            numberPicker.setMaxValue(additionalModelsNumber);
+            numberPicker.setMinValue(0);
+
+            layout.addView(numberPicker);
+            layout.addView(description);
+
+            additionalModels.addView(layout);
+        }
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void createOptionsList(Unit unit){
-        Integer i = 1;
         unit.getOptions().forEach(o -> {
-            CheckBox checkBox = new CheckBox(this);
-            checkBox.setId(o.getId().intValue());
-            checkBox.setText(o.getDescription());
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
 
-            options.addView(checkBox);
+            TextView description = new TextView(this);
+            description.setText(o.getDescription());
+
+            NumberPicker numberPicker = new NumberPicker(CreateUnitActivity.this);
+            numberPicker.setMaxValue(o.getMaxNumber());
+            numberPicker.setMinValue(0);
+            numberPicker.setId(o.getId().intValue());
+
+            layout.addView(numberPicker);
+            layout.addView(description);
+
+            options.addView(layout);
         });
     }
 
@@ -104,18 +148,24 @@ public class CreateUnitActivity extends AppCompatActivity {
             RadioButton inexpButton = new RadioButton(this);
             inexpButton.setId(1);
             inexpButton.setText(String.format("inexperienced: %d pts", unit.getInexpCost()));
+            inexpButton.setChecked(true);
+            unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
             costValue.addView(inexpButton);
         }
         if(unit.getRegCost() >= 0){
             RadioButton regButton = new RadioButton(this);
             regButton.setId(2);
             regButton.setText(String.format("regular: %d pts", unit.getRegCost()));
+            regButton.setChecked(true);
+            unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
             costValue.addView(regButton);
         }
         if(unit.getVetCost() >= 0){
             RadioButton vetButton = new RadioButton(this);
             vetButton.setId(3);
             vetButton.setText(String.format("veteran: %d pts", unit.getVetCost()));
+            vetButton.setChecked(true);
+            unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
             costValue.addView(vetButton);
         }
     }
