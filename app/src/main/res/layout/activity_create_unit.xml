@@ -42,8 +42,8 @@
             <TextView
                 android:text="@string/cost"
                 android:padding="3dip" />
-            <TextView
-                android:id="@+id/unitCost_value"
+            <RadioGroup
+                android:id="@+id/unit_base_cost_value"
                 android:gravity="right"
                 android:padding="3dip" />
         </TableRow>

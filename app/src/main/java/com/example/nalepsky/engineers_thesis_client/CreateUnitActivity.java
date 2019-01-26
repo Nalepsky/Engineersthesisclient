@@ -1,11 +1,14 @@
 package com.example.nalepsky.engineers_thesis_client;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +28,7 @@ public class CreateUnitActivity extends AppCompatActivity {
     Unit unit;
 
     TextView unitName;
-    TextView costValue;
+    ViewGroup costValue;
     TextView composition;
     TextView weapons;
     TextView options;
@@ -38,7 +41,7 @@ public class CreateUnitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_unit);
 
         unitName = (TextView) findViewById(R.id.unitName);
-        costValue = (TextView) findViewById(R.id.unitCost_value);
+        costValue = (ViewGroup ) findViewById(R.id.unit_base_cost_value);
         composition = (TextView) findViewById(R.id.composition_value);
         weapons = (TextView) findViewById(R.id.weapons_value);
         options = (TextView) findViewById(R.id.options_value);
@@ -63,7 +66,10 @@ public class CreateUnitActivity extends AppCompatActivity {
                 unit = response.body();
 
                 unitName.setText(unit.getName());
-                costValue.setText(unit.getAllCosts());
+                //costValue.setText(unit.getAllCosts());
+
+                createCostValues(unit);
+
                 composition.setText(unit.getComposition());
                 weapons.setText(createWeaponsList(unit.getWeapons()));
                 options.setText(unit.getWeaponsNamesAsString());
@@ -77,6 +83,28 @@ public class CreateUnitActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @SuppressLint("ResourceType")
+    private void createCostValues(Unit unit) {
+        if(unit.getInexpCost() >= 0){
+            RadioButton inexpButton = new RadioButton(this);
+            inexpButton.setId(1);
+            inexpButton.setText(String.format("inexperienced: %d pts", unit.getInexpCost()));
+            costValue.addView(inexpButton);
+        }
+        if(unit.getRegCost() >= 0){
+            RadioButton regButton = new RadioButton(this);
+            regButton.setId(2);
+            regButton.setText(String.format("regular: %d pts", unit.getRegCost()));
+            costValue.addView(regButton);
+        }
+        if(unit.getVetCost() >= 0){
+            RadioButton vetButton = new RadioButton(this);
+            vetButton.setId(3);
+            vetButton.setText(String.format("veteran: %d pts", unit.getVetCost()));
+            costValue.addView(vetButton);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
