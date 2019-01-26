@@ -66,15 +66,15 @@ public class Unit {
         StringBuilder result = new StringBuilder();
 
         if(getInexpCost() > -1){
-            result.append(" Inexperienced: ").append(getInexpCost()).append("pts ");
+            result.append(" Inexp: ").append(getInexpCost()).append("pts ");
         }
 
         if(getRegCost() > -1){
-            result.append(" Regular: ").append(getRegCost()).append("pts ");
+            result.append(" Reg: ").append(getRegCost()).append("pts ");
         }
 
         if(getVetCost() > -1){
-            result.append(" Veteran: ").append(getVetCost()).append("pts ");
+            result.append(" Vet: ").append(getVetCost()).append("pts ");
         }
 
         return result.toString();

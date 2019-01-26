@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import io.futurestud.retrofit1.api.model.Rule;
 import io.futurestud.retrofit1.api.model.Unit;
+import io.futurestud.retrofit1.api.model.Weapon;
 import io.futurestud.retrofit1.api.service.UnitClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,9 +65,9 @@ public class CreateUnitActivity extends AppCompatActivity {
                 unitName.setText(unit.getName());
                 costValue.setText(unit.getAllCosts());
                 composition.setText(unit.getComposition());
-                weapons.setText(unit.getWeaponsNamesAsString());
+                weapons.setText(createWeaponsList(unit.getWeapons()));
                 options.setText(unit.getWeaponsNamesAsString());
-                specialRules.setText(unit.getWeaponsNamesAsString());
+                specialRules.setText(createRulesList(unit.getRules()));
 
                 Toast.makeText(CreateUnitActivity.this, unit.getName(), Toast.LENGTH_SHORT).show();
             }
@@ -75,5 +77,31 @@ public class CreateUnitActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private String createRulesList(List<Rule> rules){
+        if(rules.size() == 0){
+            return "none";
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        rules.forEach(r -> builder.append(r.getName() + "\n"));
+
+        return builder.toString().substring(0, builder.length() - 1);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private String createWeaponsList(List<Weapon> weapons){
+        if(weapons.size() == 0){
+            return "none";
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        weapons.forEach(w -> builder.append(w.getName() + "\n"));
+
+        return builder.toString().substring(0, builder.length() - 1);
     }
 }
