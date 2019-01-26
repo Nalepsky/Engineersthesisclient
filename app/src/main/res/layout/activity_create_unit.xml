@@ -26,8 +26,8 @@
 
     <TableLayout
         android:id="@+id/unitDetails"
-        android:layout_width="395dp"
-        android:layout_height="554dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -44,7 +44,7 @@
                 android:padding="3dip" />
             <RadioGroup
                 android:id="@+id/unit_base_cost_value"
-                android:gravity="right"
+                android:gravity="left"
                 android:padding="3dip" />
         </TableRow>
 
@@ -54,7 +54,7 @@
                 android:padding="3dip" />
             <TextView
                 android:id="@+id/composition_value"
-                android:gravity="right"
+                android:gravity="left"
                 android:padding="3dip" />
         </TableRow>
 
@@ -64,7 +64,7 @@
                 android:padding="3dip" />
             <TextView
                 android:id="@+id/weapons_value"
-                android:gravity="right"
+                android:gravity="left"
                 android:padding="3dip" />
         </TableRow>
 
@@ -72,10 +72,12 @@
             <TextView
                 android:text="@string/options"
                 android:padding="3dip" />
-            <TextView
+            <LinearLayout
                 android:id="@+id/options_value"
-                android:gravity="right"
-                android:padding="3dip" />
+                android:gravity="left"
+                android:padding="3dip"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"/>
         </TableRow>
 
         <TableRow>
@@ -84,7 +86,7 @@
                 android:padding="3dip" />
             <TextView
                 android:id="@+id/special_rules_value"
-                android:gravity="right"
+                android:gravity="left"
                 android:padding="3dip" />
         </TableRow>
     </TableLayout>

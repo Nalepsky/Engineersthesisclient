@@ -8,6 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +34,7 @@ public class CreateUnitActivity extends AppCompatActivity {
     ViewGroup costValue;
     TextView composition;
     TextView weapons;
-    TextView options;
+    LinearLayout options;
     TextView specialRules;
 
     @Override
@@ -44,7 +47,7 @@ public class CreateUnitActivity extends AppCompatActivity {
         costValue = (ViewGroup ) findViewById(R.id.unit_base_cost_value);
         composition = (TextView) findViewById(R.id.composition_value);
         weapons = (TextView) findViewById(R.id.weapons_value);
-        options = (TextView) findViewById(R.id.options_value);
+        options = (LinearLayout) findViewById(R.id.options_value);
         specialRules = (TextView) findViewById(R.id.special_rules_value);
 
         Intent i = getIntent();
@@ -60,19 +63,17 @@ public class CreateUnitActivity extends AppCompatActivity {
         Call<Unit> call = client.getUnitById(unitId);
 
         call.enqueue(new Callback<Unit>() {
+            @SuppressLint("ResourceType")
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<Unit> call, Response<Unit> response) {
                 unit = response.body();
 
                 unitName.setText(unit.getName());
-                //costValue.setText(unit.getAllCosts());
-
                 createCostValues(unit);
-
                 composition.setText(unit.getComposition());
                 weapons.setText(createWeaponsList(unit.getWeapons()));
-                options.setText(unit.getWeaponsNamesAsString());
+                createOptionsList(unit);
                 specialRules.setText(createRulesList(unit.getRules()));
 
                 Toast.makeText(CreateUnitActivity.this, unit.getName(), Toast.LENGTH_SHORT).show();
@@ -82,6 +83,18 @@ public class CreateUnitActivity extends AppCompatActivity {
             public void onFailure(Call<Unit> call, Throwable t) {
 
             }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void createOptionsList(Unit unit){
+        Integer i = 1;
+        unit.getOptions().forEach(o -> {
+            CheckBox checkBox = new CheckBox(this);
+            checkBox.setId(o.getId().intValue());
+            checkBox.setText(o.getDescription());
+
+            options.addView(checkBox);
         });
     }
 
