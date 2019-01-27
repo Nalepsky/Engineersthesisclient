@@ -11,4 +11,6 @@
     <string name="options">Options</string>
     <string name="special_rules">Special Rules</string>
     <string name="additional_models">Additional models</string>
+    <string name="back">Back</string>
+    <string name="save">Save</string>
 </resources>

@@ -1,5 +1,8 @@
 package io.futurestud.retrofit1.api.model.dataHolder;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import io.futurestud.retrofit1.api.model.utils.ExperienceLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +20,4 @@ public class UnitDataHolder {
     private ExperienceLevel experienceLevel;
     private Integer numberOfAdditionalModels;
     private Set<OptionsDataHolder> options = new HashSet<>();
-
-
 }

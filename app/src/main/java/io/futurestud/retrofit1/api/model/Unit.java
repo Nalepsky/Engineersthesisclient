@@ -1,5 +1,6 @@
 package io.futurestud.retrofit1.api.model;
 
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
@@ -87,5 +88,10 @@ public class Unit {
         getWeapons().forEach(w -> result.append(w.getName() + " "));
 
         return result.toString();
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public Option getOptionById(Long id){
+        return options.stream().filter(o -> o.getId().equals(id)).findFirst().orElse(null);
     }
 }
