@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -15,5 +16,7 @@ public class UnitDataHolder {
     private Long id;
     private ExperienceLevel experienceLevel;
     private Integer numberOfAdditionalModels;
-    private Set<OptionsDataHolder> options;
+    private Set<OptionsDataHolder> options = new HashSet<>();
+
+
 }

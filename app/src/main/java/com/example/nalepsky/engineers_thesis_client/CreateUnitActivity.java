@@ -22,6 +22,7 @@ import java.util.List;
 import io.futurestud.retrofit1.api.model.Rule;
 import io.futurestud.retrofit1.api.model.Unit;
 import io.futurestud.retrofit1.api.model.Weapon;
+import io.futurestud.retrofit1.api.model.dataHolder.OptionsDataHolder;
 import io.futurestud.retrofit1.api.model.dataHolder.UnitDataHolder;
 import io.futurestud.retrofit1.api.model.utils.ExperienceLevel;
 import io.futurestud.retrofit1.api.service.UnitClient;
@@ -112,6 +113,13 @@ public class CreateUnitActivity extends AppCompatActivity {
             numberPicker.setMaxValue(additionalModelsNumber);
             numberPicker.setMinValue(0);
 
+            numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                    unitDataHolder.setNumberOfAdditionalModels(numberPicker.getValue());
+                }
+            });
+
             layout.addView(numberPicker);
             layout.addView(description);
 
@@ -135,6 +143,17 @@ public class CreateUnitActivity extends AppCompatActivity {
             numberPicker.setMaxValue(o.getMaxNumber());
             numberPicker.setMinValue(0);
             numberPicker.setId(o.getId().intValue());
+
+            numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                @Override
+                public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                    if(numberPicker.getValue() == 0){
+                        unitDataHolder.getOptions().remove(new OptionsDataHolder((long) numberPicker.getId(), numberPicker.getValue()));
+                    }else{
+                        unitDataHolder.getOptions().add(new OptionsDataHolder((long) numberPicker.getId(), numberPicker.getValue()));
+                    }
+                }
+            });
 
             layout.addView(numberPicker);
             layout.addView(description);
