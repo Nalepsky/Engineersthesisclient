@@ -116,7 +116,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
             String strUnit = data.getStringExtra("newUnit");
             UnitDataHolder newUnit = gson.fromJson(strUnit, UnitDataHolder.class);
 
-            System.out.println("unit: " + newUnit.getId());
+            selectorDataHolder.getUnits().add(newUnit);
         }
     }
 
