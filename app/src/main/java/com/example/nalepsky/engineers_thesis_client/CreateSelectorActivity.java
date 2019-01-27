@@ -11,11 +11,15 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.futurestud.retrofit1.api.model.dataHolder.EntryWithUnitNamesAndId;
+import io.futurestud.retrofit1.api.model.dataHolder.SelectorDataHolder;
+import io.futurestud.retrofit1.api.model.dataHolder.UnitDataHolder;
 import io.futurestud.retrofit1.api.model.dataHolder.UnitNameAndId;
 import io.futurestud.retrofit1.api.service.EntryClient;
 import retrofit2.Call;
@@ -31,6 +35,9 @@ public class CreateSelectorActivity extends AppCompatActivity {
     List<EntryWithUnitNamesAndId> expandableListTitle;
     LinkedHashMap<EntryWithUnitNamesAndId, List<UnitNameAndId>> expandableListDetail;
 
+    private SelectorDataHolder selectorDataHolder;
+    private final static int REQUEST_CODE_1 = 1;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +45,9 @@ public class CreateSelectorActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         final Long selectorId = i.getLongExtra("selectorId", -1);
+
+        selectorDataHolder = new SelectorDataHolder();
+        selectorDataHolder.setId(selectorId);
 
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
 
@@ -62,7 +72,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
                 i.putExtra("unitId", expandableListDetail.get(
                         expandableListTitle.get(groupPosition)).get(
                         childPosition).getId());
-                startActivity(i);
+                startActivityForResult(i, REQUEST_CODE_1);
 
                 return false;
             }
@@ -97,6 +107,19 @@ public class CreateSelectorActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE_1 && resultCode == RESULT_OK){
+            Gson gson = new Gson();
+            String strUnit = data.getStringExtra("newUnit");
+            UnitDataHolder newUnit = gson.fromJson(strUnit, UnitDataHolder.class);
+
+            System.out.println("unit: " + newUnit.getId());
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private LinkedHashMap<EntryWithUnitNamesAndId, List<UnitNameAndId>> getSelectorStructure(List<EntryWithUnitNamesAndId> entries){
         LinkedHashMap<EntryWithUnitNamesAndId, List<UnitNameAndId>> result = new LinkedHashMap<>();
@@ -109,4 +132,5 @@ public class CreateSelectorActivity extends AppCompatActivity {
 
         return result;
     }
+
 }

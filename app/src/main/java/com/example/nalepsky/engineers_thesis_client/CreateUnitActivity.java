@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nalepsky.engineers_thesis_client.Utils.UnitCost;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -113,6 +114,18 @@ public class CreateUnitActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                Gson gson = new Gson();
+                intent.putExtra("newUnit", gson.toJson(unitDataHolder));
+                setResult(RESULT_OK, intent);
+
                 finish();
             }
         });

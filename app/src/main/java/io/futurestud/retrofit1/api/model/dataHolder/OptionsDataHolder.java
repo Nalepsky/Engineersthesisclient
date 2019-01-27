@@ -3,6 +3,7 @@ package io.futurestud.retrofit1.api.model.dataHolder;
 import android.annotation.TargetApi;
 import android.os.Build;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
