@@ -43,6 +43,7 @@ public class CreateUnitActivity extends AppCompatActivity {
     TextView specialRules;
 
     private UnitDataHolder unitDataHolder;
+    private Integer additionalUnitsCostDescriptionId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +58,6 @@ public class CreateUnitActivity extends AppCompatActivity {
         additionalModels = (LinearLayout) findViewById(R.id.additional_models);
         options = (LinearLayout) findViewById(R.id.options_value);
         specialRules = (TextView) findViewById(R.id.special_rules_value);
-
-        unitDataHolder = new UnitDataHolder();
 
         Intent i = getIntent();
         final Long unitId = i.getLongExtra("unitId", -1);
@@ -78,6 +77,8 @@ public class CreateUnitActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Unit> call, Response<Unit> response) {
                 unit = response.body();
+                unitDataHolder = new UnitDataHolder();
+                unitDataHolder.setId(unit.getId());
 
                 unitName.setText(unit.getName());
                 createCostValues(unit);
@@ -86,8 +87,6 @@ public class CreateUnitActivity extends AppCompatActivity {
                 createAdditionalModelsValues(unit);
                 createOptionsList(unit);
                 specialRules.setText(createRulesList(unit.getRules()));
-
-                Toast.makeText(CreateUnitActivity.this, unit.getName(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -106,8 +105,8 @@ public class CreateUnitActivity extends AppCompatActivity {
 
         if(!unit.getMaxNumber().equals(unit.getBaseNumber())){
             Integer additionalModelsNumber = unit.getMaxNumber() - unit.getBaseNumber();
-            Integer cost = unit.getAdditionalCost(unitDataHolder.getExperienceLevel());
-            description.setText("add up to " + additionalModelsNumber + " additional soldiers for +" + cost + " pts each");
+            additionalUnitsCostDescriptionId = 9999;
+            description.setId(additionalUnitsCostDescriptionId);
 
             NumberPicker numberPicker = new NumberPicker(CreateUnitActivity.this);
             numberPicker.setMaxValue(additionalModelsNumber);
@@ -117,6 +116,8 @@ public class CreateUnitActivity extends AppCompatActivity {
             layout.addView(description);
 
             additionalModels.addView(layout);
+
+            setAdditionalModelsDescription(unit);
         }
 
     }
@@ -151,6 +152,16 @@ public class CreateUnitActivity extends AppCompatActivity {
             inexpButton.setChecked(true);
             unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
             costValue.addView(inexpButton);
+
+            inexpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    inexpButton.setChecked(true);
+                    unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
+
+                    setAdditionalModelsDescription(unit);
+                }
+            });
         }
         if(unit.getRegCost() >= 0){
             RadioButton regButton = new RadioButton(this);
@@ -159,6 +170,16 @@ public class CreateUnitActivity extends AppCompatActivity {
             regButton.setChecked(true);
             unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
             costValue.addView(regButton);
+
+            regButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    regButton.setChecked(true);
+                    unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
+
+                    setAdditionalModelsDescription(unit);
+                }
+            });
         }
         if(unit.getVetCost() >= 0){
             RadioButton vetButton = new RadioButton(this);
@@ -167,6 +188,16 @@ public class CreateUnitActivity extends AppCompatActivity {
             vetButton.setChecked(true);
             unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
             costValue.addView(vetButton);
+
+            vetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    vetButton.setChecked(true);
+                    unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
+
+                    setAdditionalModelsDescription(unit);
+                }
+            });
         }
     }
 
@@ -194,5 +225,14 @@ public class CreateUnitActivity extends AppCompatActivity {
         weapons.forEach(w -> builder.append(w.getName() + "\n"));
 
         return builder.toString().substring(0, builder.length() - 1);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setAdditionalModelsDescription(Unit unit){
+        TextView description = findViewById(additionalUnitsCostDescriptionId);
+
+        Integer additionalModelsNumber = unit.getMaxNumber() - unit.getBaseNumber();
+        Integer cost = unit.getAdditionalCost(unitDataHolder.getExperienceLevel());
+        description.setText("add up to " + additionalModelsNumber + " additional soldiers for +" + cost + " pts each");
     }
 }
