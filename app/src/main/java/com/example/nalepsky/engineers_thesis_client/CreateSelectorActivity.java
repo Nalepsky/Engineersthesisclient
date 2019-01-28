@@ -1,5 +1,6 @@
 package com.example.nalepsky.engineers_thesis_client;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,8 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.nalepsky.engineers_thesis_client.Utils.SelectorCost;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -34,22 +37,30 @@ public class CreateSelectorActivity extends AppCompatActivity {
     private ExpandableListAdapter expandableListAdapter;
     List<EntryWithUnitNamesAndId> expandableListTitle;
     LinkedHashMap<EntryWithUnitNamesAndId, List<UnitNameAndId>> expandableListDetail;
+    private TextView selectorCostTextView;
 
     private SelectorDataHolder selectorDataHolder;
+    private SelectorCost selectorCost;
+
     private final static int REQUEST_CODE_1 = 1;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_armylist);
+        setContentView(R.layout.activity_create_selector);
 
         Intent i = getIntent();
         final Long selectorId = i.getLongExtra("selectorId", -1);
+
+        selectorCost = new SelectorCost();
 
         selectorDataHolder = new SelectorDataHolder();
         selectorDataHolder.setId(selectorId);
 
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
+        selectorCostTextView = (TextView) findViewById(R.id.current_selector_cost);
+        selectorCostTextView.setText("0pts");
 
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
@@ -107,6 +118,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -114,9 +126,13 @@ public class CreateSelectorActivity extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_1 && resultCode == RESULT_OK){
             Gson gson = new Gson();
             String strUnit = data.getStringExtra("newUnit");
+            Integer newUnitCost = data.getIntExtra("cost", -1);
             UnitDataHolder newUnit = gson.fromJson(strUnit, UnitDataHolder.class);
 
             selectorDataHolder.getUnits().add(newUnit);
+            selectorCost.getUnitsCost().put(selectorDataHolder.getUnits().size()-1, newUnitCost);
+
+            selectorCostTextView.setText(selectorCost.getTotalSelectorCost().toString() + " pts");
         }
     }
 

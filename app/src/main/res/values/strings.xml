@@ -13,4 +13,5 @@
     <string name="additional_models">Additional models</string>
     <string name="back">Back</string>
     <string name="save">Save</string>
+    <string name="save_selector">save selector</string>
 </resources>

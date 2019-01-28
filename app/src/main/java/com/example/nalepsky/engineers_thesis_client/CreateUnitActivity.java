@@ -10,13 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nalepsky.engineers_thesis_client.Utils.UnitCost;
 import com.google.gson.Gson;
@@ -119,11 +116,13 @@ public class CreateUnitActivity extends AppCompatActivity {
         });
 
         save.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 Gson gson = new Gson();
                 intent.putExtra("newUnit", gson.toJson(unitDataHolder));
+                intent.putExtra("cost", unitCost.getTotalCost());
                 setResult(RESULT_OK, intent);
 
                 finish();
@@ -154,7 +153,7 @@ public class CreateUnitActivity extends AppCompatActivity {
                     unitDataHolder.setNumberOfAdditionalModels(numberPicker.getValue());
 
                     unitCost.setAdditionalModelsNumber( numberPicker.getValue());
-                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                 }
             });
 
@@ -192,14 +191,14 @@ public class CreateUnitActivity extends AppCompatActivity {
 
                         unitCost.getOptionsCost().remove(id);
 
-                        currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+                        currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                     }else{
                         Long id = (long) numberPicker.getId();
                         Integer value = numberPicker.getValue();
                         unitDataHolder.getOptions().add(new OptionsDataHolder(id, value));
 
                         unitCost.getOptionsCost().put(id, value * unit.getOptionById(id).getCost());
-                        currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+                        currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                     }
                 }
             });
@@ -217,14 +216,14 @@ public class CreateUnitActivity extends AppCompatActivity {
         if(unit.getInexpCost() >= 0){
             RadioButton inexpButton = new RadioButton(this);
             inexpButton.setId(1);
-            inexpButton.setText(String.format("inexperienced: %d pts", unit.getInexpCost()));
+            inexpButton.setText(String.format("inexperienced: %d pts", unit.getInexpCost())+"pts");
             inexpButton.setChecked(true);
             unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
             costValue.addView(inexpButton);
 
             unitCost.setBaseCost(unit.getInexpCost());
             unitCost.setAdditionalModelsCost(unit.getInexpAdditionalCost());
-            currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+            currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
 
             inexpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -236,21 +235,21 @@ public class CreateUnitActivity extends AppCompatActivity {
 
                     unitCost.setBaseCost(unit.getInexpCost());
                     unitCost.setAdditionalModelsCost(unit.getInexpAdditionalCost());
-                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                 }
             });
         }
         if(unit.getRegCost() >= 0){
             RadioButton regButton = new RadioButton(this);
             regButton.setId(2);
-            regButton.setText(String.format("regular: %d pts", unit.getRegCost()));
+            regButton.setText(String.format("regular: %d pts", unit.getRegCost())+"pts");
             regButton.setChecked(true);
             unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
             costValue.addView(regButton);
 
             unitCost.setBaseCost(unit.getRegCost());
             unitCost.setAdditionalModelsCost(unit.getRegAdditionalCost());
-            currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+            currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
 
             regButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -262,21 +261,21 @@ public class CreateUnitActivity extends AppCompatActivity {
 
                     unitCost.setBaseCost(unit.getRegCost());
                     unitCost.setAdditionalModelsCost(unit.getRegAdditionalCost());
-                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                 }
             });
         }
         if(unit.getVetCost() >= 0){
             RadioButton vetButton = new RadioButton(this);
             vetButton.setId(3);
-            vetButton.setText(String.format("veteran: %d pts", unit.getVetCost()));
+            vetButton.setText(String.format("veteran: %d pts", unit.getVetCost())+"pts");
             vetButton.setChecked(true);
             unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
             costValue.addView(vetButton);
 
             unitCost.setBaseCost(unit.getVetCost());
             unitCost.setAdditionalModelsCost(unit.getVetAdditionalCost());
-            currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+            currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
 
             vetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -288,7 +287,7 @@ public class CreateUnitActivity extends AppCompatActivity {
 
                     unitCost.setBaseCost(unit.getVetCost());
                     unitCost.setAdditionalModelsCost(unit.getVetAdditionalCost());
-                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString());
+                    currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                 }
             });
         }
