@@ -44,6 +44,11 @@ public class CreateSelectorActivity extends AppCompatActivity {
 
     private final static int REQUEST_CODE_1 = 1;
 
+    private Integer selectedEntryPosition = -1;
+    private String selectedUnitName = "NAME";
+
+    Long correspondingUnitIdInDataHolder;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,10 +84,28 @@ public class CreateSelectorActivity extends AppCompatActivity {
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
 
+                selectedEntryPosition = groupPosition;
+
+                selectedUnitName = expandableListDetail.get(
+                        expandableListTitle.get(groupPosition)).get(
+                        childPosition).getName();
+
                 Intent i = new Intent(getApplicationContext(), CreateUnitActivity.class);
                 i.putExtra("unitId", expandableListDetail.get(
                         expandableListTitle.get(groupPosition)).get(
                         childPosition).getId());
+
+                correspondingUnitIdInDataHolder = expandableListDetail.get(
+                        expandableListTitle.get(groupPosition)).get(
+                        childPosition).getCorrespondingUnitIdInDataHolder();
+
+                if(correspondingUnitIdInDataHolder >= 0){
+                    Gson gson = new Gson();
+                    i.putExtra("unit", gson.toJson(selectorDataHolder
+                            .getUnits()
+                            .get(correspondingUnitIdInDataHolder.intValue())));
+                }
+
                 startActivityForResult(i, REQUEST_CODE_1);
 
                 return false;
@@ -118,6 +141,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -129,10 +153,28 @@ public class CreateSelectorActivity extends AppCompatActivity {
             Integer newUnitCost = data.getIntExtra("cost", -1);
             UnitDataHolder newUnit = gson.fromJson(strUnit, UnitDataHolder.class);
 
-            selectorDataHolder.getUnits().add(newUnit);
-            selectorCost.getUnitsCost().put(selectorDataHolder.getUnits().size()-1, newUnitCost);
+            if(correspondingUnitIdInDataHolder == -1){
+                selectorDataHolder.getUnits().add(newUnit);
+                selectorCost.getUnitsCost().put(selectorDataHolder.getUnits().size() - 1, newUnitCost);
+            }else{
+                selectorDataHolder.getUnits().set(correspondingUnitIdInDataHolder.intValue(), newUnit);
+                selectorCost.getUnitsCost().put(correspondingUnitIdInDataHolder.intValue(), newUnitCost);
+            }
 
             selectorCostTextView.setText(selectorCost.getTotalSelectorCost().toString() + " pts");
+
+            if(correspondingUnitIdInDataHolder == -1) {
+                entries.get(selectedEntryPosition)
+                        .getUnits()
+                        .add(new UnitNameAndId(newUnit.getId(),
+                                selectedUnitName,
+                                (long) selectorDataHolder.getUnits().size() - 1));
+            }
+
+            expandableListDetail = getSelectorStructure(entries);
+            expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+            expandableListAdapter = new CustomExpandableListAdapter(CreateSelectorActivity.this , expandableListTitle, expandableListDetail);
+            expandableListView.setAdapter(expandableListAdapter);
         }
     }
 

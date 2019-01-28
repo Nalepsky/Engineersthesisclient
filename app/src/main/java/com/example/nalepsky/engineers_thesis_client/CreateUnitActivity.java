@@ -19,6 +19,7 @@ import com.example.nalepsky.engineers_thesis_client.Utils.UnitCost;
 import com.google.gson.Gson;
 
 import java.util.List;
+import java.util.Map;
 
 import io.futurestud.retrofit1.api.model.Rule;
 import io.futurestud.retrofit1.api.model.Unit;
@@ -74,6 +75,15 @@ public class CreateUnitActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         final Long unitId = i.getLongExtra("unitId", -1);
+        String unitStr = i.getStringExtra("unit");
+
+        if(unitStr != null){
+            Gson gson = new Gson();
+            unitDataHolder = gson.fromJson(unitStr, UnitDataHolder.class);
+        }
+        else{
+            unitDataHolder = new UnitDataHolder();
+        }
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080")
@@ -90,7 +100,6 @@ public class CreateUnitActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Unit> call, Response<Unit> response) {
                 unit = response.body();
-                unitDataHolder = new UnitDataHolder();
                 unitDataHolder.setId(unit.getId());
 
                 unitName.setText(unit.getName());
@@ -130,6 +139,7 @@ public class CreateUnitActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     private void createAdditionalModelsValues(Unit unit){
         LinearLayout layout = new LinearLayout(this);
@@ -146,13 +156,19 @@ public class CreateUnitActivity extends AppCompatActivity {
             numberPicker.setMaxValue(additionalModelsNumber);
             numberPicker.setMinValue(0);
 
+            numberPicker.setValue(unitDataHolder.getNumberOfAdditionalModels());
+            if(numberPicker.getValue() > 0){
+                unitCost.setAdditionalModelsNumber(unitDataHolder.getNumberOfAdditionalModels());
+                currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
+            }
+
             numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                     unitDataHolder.setNumberOfAdditionalModels(numberPicker.getValue());
 
-                    unitCost.setAdditionalModelsNumber( numberPicker.getValue());
+                    unitCost.setAdditionalModelsNumber(numberPicker.getValue());
                     currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                 }
             });
@@ -180,6 +196,13 @@ public class CreateUnitActivity extends AppCompatActivity {
             numberPicker.setMaxValue(o.getMaxNumber());
             numberPicker.setMinValue(0);
             numberPicker.setId(o.getId().intValue());
+
+
+            numberPicker.setValue(unitDataHolder.getCountOfOptionById(o.getId()));
+            if(numberPicker.getValue() > 0){
+                unitCost.getOptionsCost().put(o.getId(), numberPicker.getValue() * unit.getOptionById(o.getId()).getCost());
+                currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
+            }
 
             numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                 @Override
@@ -213,12 +236,18 @@ public class CreateUnitActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("ResourceType")
     private void createCostValues(Unit unit) {
+        RadioButton inexpButton = new RadioButton(this);
+        inexpButton.setId(1);
+        RadioButton regButton = new RadioButton(this);
+        regButton.setId(2);
+        RadioButton vetButton = new RadioButton(this);
+        vetButton.setId(3);
+
+
         if(unit.getInexpCost() >= 0){
-            RadioButton inexpButton = new RadioButton(this);
-            inexpButton.setId(1);
             inexpButton.setText(String.format("inexperienced: %d pts", unit.getInexpCost())+"pts");
             inexpButton.setChecked(true);
-            unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
+            //unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
             costValue.addView(inexpButton);
 
             unitCost.setBaseCost(unit.getInexpCost());
@@ -240,11 +269,9 @@ public class CreateUnitActivity extends AppCompatActivity {
             });
         }
         if(unit.getRegCost() >= 0){
-            RadioButton regButton = new RadioButton(this);
-            regButton.setId(2);
             regButton.setText(String.format("regular: %d pts", unit.getRegCost())+"pts");
             regButton.setChecked(true);
-            unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
+            //unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
             costValue.addView(regButton);
 
             unitCost.setBaseCost(unit.getRegCost());
@@ -266,11 +293,9 @@ public class CreateUnitActivity extends AppCompatActivity {
             });
         }
         if(unit.getVetCost() >= 0){
-            RadioButton vetButton = new RadioButton(this);
-            vetButton.setId(3);
             vetButton.setText(String.format("veteran: %d pts", unit.getVetCost())+"pts");
             vetButton.setChecked(true);
-            unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
+            //unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
             costValue.addView(vetButton);
 
             unitCost.setBaseCost(unit.getVetCost());
@@ -290,6 +315,36 @@ public class CreateUnitActivity extends AppCompatActivity {
                     currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
                 }
             });
+        }
+
+        if(unitDataHolder.getExperienceLevel() != null){
+            if(unitDataHolder.getExperienceLevel().equals(ExperienceLevel.INEXPERIENCED)){
+                inexpButton.setChecked(true);
+                unitCost.setBaseCost(unit.getInexpCost());
+                unitCost.setAdditionalModelsCost(unit.getInexpAdditionalCost());
+                currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
+                inexpButton.setText(String.format("inexperienced: %d pts", unit.getInexpCost())+"pts");
+            }else if(unitDataHolder.getExperienceLevel().equals(ExperienceLevel.REGULAR)){
+                regButton.setChecked(true);
+                unitCost.setBaseCost(unit.getRegCost());
+                unitCost.setAdditionalModelsCost(unit.getRegAdditionalCost());
+                currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
+                regButton.setText(String.format("regular: %d pts", unit.getRegCost())+"pts");
+            }else if(unitDataHolder.getExperienceLevel().equals(ExperienceLevel.VETERAN)){
+                vetButton.setChecked(true);
+                unitCost.setBaseCost(unit.getVetCost());
+                unitCost.setAdditionalModelsCost(unit.getVetAdditionalCost());
+                currentUnitPointsValue.setText(unitCost.getTotalCost().toString()+"pts");
+                vetButton.setText(String.format("veteran: %d pts", unit.getVetCost())+"pts");
+            }
+        }
+
+        if(inexpButton.isChecked()){
+            unitDataHolder.setExperienceLevel(ExperienceLevel.INEXPERIENCED);
+        } else if(regButton.isChecked()) {
+            unitDataHolder.setExperienceLevel(ExperienceLevel.REGULAR);
+        } else if(vetButton.isChecked()) {
+            unitDataHolder.setExperienceLevel(ExperienceLevel.VETERAN);
         }
     }
 
