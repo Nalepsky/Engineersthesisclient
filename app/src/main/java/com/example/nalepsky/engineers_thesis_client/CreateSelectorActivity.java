@@ -18,15 +18,26 @@ import com.example.nalepsky.engineers_thesis_client.Utils.SelectorCost;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.futurestud.retrofit1.api.model.dataHolder.EntryWithUnitNamesAndId;
 import io.futurestud.retrofit1.api.model.dataHolder.SelectorDataHolder;
 import io.futurestud.retrofit1.api.model.dataHolder.UnitDataHolder;
 import io.futurestud.retrofit1.api.model.dataHolder.UnitNameAndId;
+import io.futurestud.retrofit1.api.service.ArmyListClient;
 import io.futurestud.retrofit1.api.service.EntryClient;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -151,11 +162,46 @@ public class CreateSelectorActivity extends AppCompatActivity {
                         .setLenient()
                         .create();
 
+                OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                        .connectTimeout(1, TimeUnit.MINUTES)
+                        .readTimeout(1, TimeUnit.MINUTES)
+                        .writeTimeout(1, TimeUnit.MINUTES)
+                        .build();
 
-                Intent i = new Intent(getApplicationContext(), ShowArmyListActivity.class);
+                Retrofit.Builder builder = new Retrofit.Builder()
+                        .baseUrl("http://10.0.2.2:8080")
+                        .client(okHttpClient);
+                //.addConverterFactory(GsonConverterFactory.create(gson));
+
+                Retrofit retrofit = builder.build();
+
+                ArmyListClient client = retrofit.create(ArmyListClient.class);
+
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), gson.toJson(selectorDataHolder));
+
+                Call<ResponseBody> call = client.downloadPDF(requestBody);
+
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            boolean success = writeResponseBodyToDisk(response.body());
+
+                            Toast.makeText(CreateSelectorActivity.this, "Army List saved", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Toast.makeText(CreateSelectorActivity.this, "Something went wrong :<", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                /*Intent i = new Intent(getApplicationContext(), ShowArmyListActivity.class);
                 i.putExtra("selector", gson.toJson(selectorDataHolder));
 
-                startActivity(i);
+                startActivity(i);*/
             }
         });
     }
@@ -210,4 +256,50 @@ public class CreateSelectorActivity extends AppCompatActivity {
         return result;
     }
 
+    private boolean writeResponseBodyToDisk(ResponseBody body) throws IOException {
+        try {
+            File file = new File(getExternalFilesDir(null) + File.separator + "ArmyList.pdf");
+
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+
+            try {
+                byte[] fileReader = new byte[4096];
+
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+
+                inputStream = body.byteStream();
+                outputStream = new FileOutputStream(file);
+
+                while (true) {
+                    int read = inputStream.read(fileReader);
+
+                    if (read == -1) {
+                        break;
+                    }
+
+                    outputStream.write(fileReader, 0, read);
+
+                    fileSizeDownloaded += read;
+                }
+
+                outputStream.flush();
+
+                return true;
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

@@ -23,7 +23,6 @@
         <activity android:name=".ChooseSelectorActivity" />
         <activity android:name=".CreateSelectorActivity" />
         <activity android:name=".CreateUnitActivity" />
-        <activity android:name=".ShowArmyListActivity" />
     </application>
 
 </manifest>
