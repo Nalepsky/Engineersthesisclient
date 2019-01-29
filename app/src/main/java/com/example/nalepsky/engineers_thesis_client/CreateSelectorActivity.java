@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.nalepsky.engineers_thesis_client.Utils.SelectorCost;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,6 +40,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
     List<EntryWithUnitNamesAndId> expandableListTitle;
     LinkedHashMap<EntryWithUnitNamesAndId, List<UnitNameAndId>> expandableListDetail;
     private TextView selectorCostTextView;
+    private Button saveButton;
 
     private SelectorDataHolder selectorDataHolder;
     private SelectorCost selectorCost;
@@ -47,7 +50,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
     private Integer selectedEntryPosition = -1;
     private String selectedUnitName = "NAME";
 
-    Long correspondingUnitIdInDataHolder;
+    private Long correspondingUnitIdInDataHolder;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -66,6 +69,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
         selectorCostTextView = (TextView) findViewById(R.id.current_selector_cost);
         selectorCostTextView.setText("0pts");
+        saveButton = findViewById(R.id.save_button);
 
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
@@ -137,6 +141,21 @@ public class CreateSelectorActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<EntryWithUnitNamesAndId>> call, Throwable t) {
                 Toast.makeText(CreateSelectorActivity.this, "error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new GsonBuilder()
+                        .setLenient()
+                        .create();
+
+
+                Intent i = new Intent(getApplicationContext(), ShowArmyListActivity.class);
+                i.putExtra("selector", gson.toJson(selectorDataHolder));
+
+                startActivity(i);
             }
         });
     }

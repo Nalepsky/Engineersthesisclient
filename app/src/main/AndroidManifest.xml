@@ -3,6 +3,7 @@
     package="com.example.nalepsky.engineers_thesis_client">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -22,6 +23,7 @@
         <activity android:name=".ChooseSelectorActivity" />
         <activity android:name=".CreateSelectorActivity" />
         <activity android:name=".CreateUnitActivity" />
+        <activity android:name=".ShowArmyListActivity" />
     </application>
 
 </manifest>
