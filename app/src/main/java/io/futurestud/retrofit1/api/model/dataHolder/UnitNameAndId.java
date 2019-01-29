@@ -22,6 +22,13 @@ public class UnitNameAndId {
 
     @Override
     public String toString() {
-        return name + " " + correspondingUnitIdInDataHolder;
+        StringBuilder builder = new StringBuilder();
+        if(!correspondingUnitIdInDataHolder.equals(-1L)){
+            builder.append("[EDIT] ");
+        }
+
+        builder.append(name);
+
+        return builder.toString();
     }
 }
