@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -144,6 +145,7 @@ public class CreateUnitActivity extends AppCompatActivity {
     private void createAdditionalModelsValues(Unit unit){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(Gravity.CENTER_VERTICAL);
 
         TextView description = new TextView(this);
 
@@ -188,8 +190,10 @@ public class CreateUnitActivity extends AppCompatActivity {
         unit.getOptions().forEach(o -> {
             LinearLayout layout = new LinearLayout(this);
             layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setGravity(Gravity.CENTER_VERTICAL);
 
             TextView description = new TextView(this);
+            description.setGravity(Gravity.LEFT);
             description.setText(o.getDescription());
 
             NumberPicker numberPicker = new NumberPicker(CreateUnitActivity.this);
