@@ -34,6 +34,7 @@ import io.futurestud.retrofit1.api.model.dataHolder.UnitDataHolder;
 import io.futurestud.retrofit1.api.model.dataHolder.UnitNameAndId;
 import io.futurestud.retrofit1.api.service.ArmyListClient;
 import io.futurestud.retrofit1.api.service.EntryClient;
+import io.futurestud.retrofit1.api.service.ServerProperties;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -128,7 +129,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
         });
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(ServerProperties.IP)
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
@@ -169,7 +170,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
                         .build();
 
                 Retrofit.Builder builder = new Retrofit.Builder()
-                        .baseUrl("http://10.0.2.2:8080")
+                        .baseUrl(ServerProperties.IP)
                         .client(okHttpClient);
                 //.addConverterFactory(GsonConverterFactory.create(gson));
 

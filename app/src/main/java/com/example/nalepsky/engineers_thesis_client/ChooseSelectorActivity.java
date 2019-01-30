@@ -18,6 +18,7 @@ import io.futurestud.retrofit1.api.model.Selector;
 import io.futurestud.retrofit1.api.model.dataHolder.SelectorWithoutEntries;
 import io.futurestud.retrofit1.api.service.SelectorClient;
 
+import io.futurestud.retrofit1.api.service.ServerProperties;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,7 +40,7 @@ public class ChooseSelectorActivity extends ListActivity {
         selectorsListView.setAdapter(adapter);
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(ServerProperties.IP)
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();

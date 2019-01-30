@@ -28,6 +28,7 @@ import io.futurestud.retrofit1.api.model.Weapon;
 import io.futurestud.retrofit1.api.model.dataHolder.OptionsDataHolder;
 import io.futurestud.retrofit1.api.model.dataHolder.UnitDataHolder;
 import io.futurestud.retrofit1.api.model.utils.ExperienceLevel;
+import io.futurestud.retrofit1.api.service.ServerProperties;
 import io.futurestud.retrofit1.api.service.UnitClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,7 +88,7 @@ public class CreateUnitActivity extends AppCompatActivity {
         }
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(ServerProperties.IP)
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
