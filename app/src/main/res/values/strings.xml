@@ -18,4 +18,5 @@
     <string name="email">email</string>
     <string name="create_account">Create Account</string>
     <string name="log_in">Log In</string>
+    <string name="saved_selectors">Saved Selectors</string>
 </resources>

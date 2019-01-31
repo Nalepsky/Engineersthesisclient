@@ -65,6 +65,7 @@ public class CreateSelectorActivity extends AppCompatActivity {
 
     private Long correspondingUnitIdInDataHolder;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,13 +77,15 @@ public class CreateSelectorActivity extends AppCompatActivity {
 
         selectorCost = new SelectorCost();
 
-        selectorDataHolder = new SelectorDataHolder();
-        selectorDataHolder.setId(selectorId);
 
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
         selectorCostTextView = (TextView) findViewById(R.id.current_selector_cost);
         selectorCostTextView.setText("0pts");
         saveButton = findViewById(R.id.save_button);
+
+        selectorDataHolder = new SelectorDataHolder();
+        selectorDataHolder.setId(selectorId);
+
 
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
@@ -149,6 +152,22 @@ public class CreateSelectorActivity extends AppCompatActivity {
                 expandableListAdapter = new CustomExpandableListAdapter(CreateSelectorActivity.this , expandableListTitle, expandableListDetail);
                 expandableListView.setAdapter(expandableListAdapter);
 
+                if(i.getStringExtra("selectorDataHolder") != null){
+                    Gson gson = new Gson();
+                    selectorDataHolder = gson.fromJson(i.getStringExtra("selectorDataHolder"), SelectorDataHolder.class);
+
+                    selectorDataHolder.getUnits().forEach(u -> {
+                        selectorCost.getUnitsCost().put(selectorDataHolder.getUnits().size() - 1, 0);
+                    });
+
+                    selectorCostTextView.setText(selectorDataHolder.getPoints().toString() + " pts");
+
+                    expandableListDetail = getSelectorStructure(entries);
+                    expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                    expandableListAdapter = new CustomExpandableListAdapter(CreateSelectorActivity.this , expandableListTitle, expandableListDetail);
+                    expandableListView.setAdapter(expandableListAdapter);
+                }
+
             }
 
             @Override
@@ -160,6 +179,8 @@ public class CreateSelectorActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectorDataHolder.setPoints(selectorCost.getTotalSelectorCost());
+
                 Gson gson = new GsonBuilder()
                         .setLenient()
                         .create();
@@ -180,8 +201,6 @@ public class CreateSelectorActivity extends AppCompatActivity {
                 ArmyListClient client = retrofit.create(ArmyListClient.class);
 
                 RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), gson.toJson(selectorDataHolder));
-
-                System.out.println("=============" + SingletonUser.getUserId());
 
                 Call<ResponseBody> call = client.downloadPDF(SingletonUser.getUserId(), requestBody);
 

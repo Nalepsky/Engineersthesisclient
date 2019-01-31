@@ -24,6 +24,7 @@
         <activity android:name=".CreateSelectorActivity" />
         <activity android:name=".CreateUnitActivity" />
         <activity android:name=".MenuActivity" />
+        <activity android:name=".SavedSelectorsActivity" />
     </application>
 
 </manifest>

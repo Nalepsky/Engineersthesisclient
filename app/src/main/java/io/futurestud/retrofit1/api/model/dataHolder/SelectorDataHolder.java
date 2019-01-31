@@ -23,4 +23,8 @@ public class SelectorDataHolder {
         return units.size();
     }
 
+    @Override
+    public String toString() {
+        return "Saved Selector " + getPoints();
+    }
 }

@@ -16,10 +16,4 @@ public interface UserClient {
 
     @POST("user/login/{email}")
     Call<Long> loginUser(@Path("email") String email, @Body String password);
-
-    @POST("user/savearmylist/{id}")
-    Call<Boolean> saveArmyList(@Path("{id") Long id, @Body RequestBody jsonArmyList);
-
-    @GET("user/getarmylists/{id}")
-    Call<List<String>> getArmyLists(@Path("{id") Long userId);
 }
