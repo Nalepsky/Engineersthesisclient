@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nalepsky.engineers_thesis_client.Utils.SelectorCost;
+import com.example.nalepsky.engineers_thesis_client.Utils.SingletonUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -180,7 +181,9 @@ public class CreateSelectorActivity extends AppCompatActivity {
 
                 RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), gson.toJson(selectorDataHolder));
 
-                Call<ResponseBody> call = client.downloadPDF(requestBody);
+                System.out.println("=============" + SingletonUser.getUserId());
+
+                Call<ResponseBody> call = client.downloadPDF(SingletonUser.getUserId(), requestBody);
 
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override

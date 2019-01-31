@@ -5,11 +5,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ArmyListClient {
-    //@POST("create/getpdf")
-    //Call<byte[]> createPDF(@Body RequestBody json);
 
-    @POST("create/getpdf")
-    Call<ResponseBody> downloadPDF(@Body RequestBody json);
+    @POST("create/getpdf/{userId}")
+    Call<ResponseBody> downloadPDF(@Path("userId") Long userId, @Body RequestBody json);
 }
